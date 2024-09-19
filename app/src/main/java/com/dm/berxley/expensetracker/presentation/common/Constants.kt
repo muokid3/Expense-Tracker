@@ -11,4 +11,5 @@ object Constants {
     val SPACER_8 = 8.dp
     val SPACER_4 = 4.dp
     val SPACER_2 = 2.dp
+    val SPACER_150 = 150.dp
 }

@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.dm.berxley.expensetracker.presentation.home.HomeScreen
 import com.dm.berxley.expensetracker.presentation.onboarding.intro.IntroScreen
+import com.dm.berxley.expensetracker.presentation.profile.ProfileScreen
 
 @Composable
 fun NavGraph(
@@ -53,7 +54,7 @@ fun NavGraph(
             }
 
             composable(route = Screen.ProfileScreen.route){
-
+                ProfileScreen(navController = navController)
             }
 
         }

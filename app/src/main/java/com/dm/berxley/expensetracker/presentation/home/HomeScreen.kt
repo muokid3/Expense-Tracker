@@ -111,7 +111,7 @@ fun HomeScreen(navController: NavController) {
                     IconButton(onClick = { /* do something */ }) {
                         Icon(
                             imageVector = Icons.Filled.Notifications,
-                            tint = Color.White,
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             contentDescription = "Notifications"
                         )
                     }
