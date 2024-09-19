@@ -1,6 +1,7 @@
 package com.dm.berxley.expensetracker
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -15,15 +16,22 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor() : ViewModel() {
     var showSplash by mutableStateOf(true)
         private set
-    var startDestination by mutableStateOf(Screen.OnboardingNavigator.route)
+    var startDestination by mutableStateOf(Screen.CoreNavigator.route)
         private set
 
-    var selectedBottomIndex by mutableStateOf(0)
+    var selectedBottomIndex by mutableIntStateOf(0)
         private set
 
     init {
         viewModelScope.launch {
-            delay(3000)
+            delay(2000)
+
+//            //check if looged in and assign start page
+//            if (true){
+//                startDestination = Screen.CoreNavigator.route
+//            }else{
+//                startDestination = Screen.OnboardingNavigator.route
+//            }
             showSplash = false
         }
     }

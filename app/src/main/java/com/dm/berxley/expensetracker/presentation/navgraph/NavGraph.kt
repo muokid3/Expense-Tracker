@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.dm.berxley.expensetracker.presentation.home.HomeScreen
 import com.dm.berxley.expensetracker.presentation.onboarding.intro.IntroScreen
 
 @Composable
@@ -40,7 +41,7 @@ fun NavGraph(
             startDestination = Screen.HomeScreen.route
         ) {
             composable(route = Screen.HomeScreen.route){
-
+                HomeScreen(navController = navController)
             }
 
             composable(route = Screen.StatisticsScreen.route){
