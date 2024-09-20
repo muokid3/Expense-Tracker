@@ -15,10 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
@@ -37,10 +35,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,7 +44,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.dm.berxley.expensetracker.domain.models.Bill
@@ -117,97 +110,135 @@ fun WalletScreen(navController: NavController) {
 
             item {
                 Spacer(modifier = Modifier.height(Constants.SPACER_24))
+            }
+
+            item {
                 Text(text = "Total Balance", fontWeight = FontWeight.Light, fontSize = 18.sp)
                 Text(text = "$ 2,546.89", fontWeight = FontWeight.Bold, fontSize = 24.sp)
             }
 
             item {
                 Spacer(modifier = Modifier.height(Constants.SPACER_24))
+            }
+
+            item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
+                    Column {
 
-                    IconButton(
-                        modifier = Modifier.size(55.dp),
-                        onClick = { /*TODO*/ },
-                        colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = Color.White,
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        )
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.onPrimary)
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(Constants.SPACER_8),
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "add",
-                                tint = MaterialTheme.colorScheme.primary
+                        IconButton(
+                            modifier = Modifier.size(55.dp),
+                            onClick = { /*TODO*/ },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = Color.White,
+                                containerColor = MaterialTheme.colorScheme.primary,
                             )
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.onPrimary)
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(Constants.SPACER_8),
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "add",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
                         }
 
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = Constants.SPACER_8),
+                            text = "Add",
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
 
-                    IconButton(
-                        modifier = Modifier.size(55.dp),
-                        onClick = { /*TODO*/ },
-                        colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        )
-                    ) {
 
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.onPrimary)
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(Constants.SPACER_8),
-                                imageVector = Icons.Default.QrCode,
-                                contentDescription = "pay",
-                                tint = MaterialTheme.colorScheme.primary,
+                    Column {
+                        IconButton(
+                            modifier = Modifier.size(55.dp),
+                            onClick = { /*TODO*/ },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onPrimary,
+                                containerColor = MaterialTheme.colorScheme.primary,
                             )
+                        ) {
+
+                            Box(
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.onPrimary)
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(Constants.SPACER_8),
+                                    imageVector = Icons.Default.QrCode,
+                                    contentDescription = "pay",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+
                         }
 
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = Constants.SPACER_8),
+                            text = "Pay",
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
 
-                    IconButton(
-                        modifier = Modifier.size(55.dp),
-                        onClick = { /*TODO*/ },
-                        colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        )
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.onPrimary)
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(Constants.SPACER_8),
-                                imageVector = Icons.Default.SendTimeExtension,
-                                contentDescription = "send",
-                                tint = MaterialTheme.colorScheme.primary
+                    Column {
+                        IconButton(
+                            modifier = Modifier.size(55.dp),
+                            onClick = { /*TODO*/ },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onPrimary,
+                                containerColor = MaterialTheme.colorScheme.primary,
                             )
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.onPrimary)
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(Constants.SPACER_8),
+                                    imageVector = Icons.Default.SendTimeExtension,
+                                    contentDescription = "send",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
+
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = Constants.SPACER_8),
+                            text = "Send",
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
 
                 }
             }
+
             item {
                 Spacer(modifier = Modifier.height(Constants.SPACER_24))
             }
@@ -421,13 +452,13 @@ fun LazyListScope.transactionsScreen() {
             time = "17:09"
         )
     )
-    itemsIndexed(transactions){index, transaction ->
+    itemsIndexed(transactions) { index, transaction ->
         TransactionItem(transaction = transaction)
     }
 }
 
 fun LazyListScope.billsScreen() {
-    val bills  = listOf(
+    val bills = listOf(
         Bill(
             id = 1,
             merchant_name = "Spotify",
@@ -526,7 +557,7 @@ fun LazyListScope.billsScreen() {
         )
     )
 
-    itemsIndexed(bills){index, bill ->
+    itemsIndexed(bills) { index, bill ->
         BillItem(bill = bill)
     }
 }
