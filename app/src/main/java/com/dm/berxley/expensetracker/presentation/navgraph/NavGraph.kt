@@ -12,6 +12,7 @@ import androidx.navigation.navigation
 import com.dm.berxley.expensetracker.presentation.home.HomeScreen
 import com.dm.berxley.expensetracker.presentation.onboarding.intro.IntroScreen
 import com.dm.berxley.expensetracker.presentation.profile.ProfileScreen
+import com.dm.berxley.expensetracker.presentation.wallet.WalletScreen
 
 @Composable
 fun NavGraph(
@@ -50,7 +51,7 @@ fun NavGraph(
             }
 
             composable(route = Screen.WalletScreen.route){
-
+                WalletScreen(navController = navController)
             }
 
             composable(route = Screen.ProfileScreen.route){
