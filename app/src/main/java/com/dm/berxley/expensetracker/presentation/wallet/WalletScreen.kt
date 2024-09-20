@@ -1,5 +1,6 @@
 package com.dm.berxley.expensetracker.presentation.wallet
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,6 +36,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -44,17 +49,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.dm.berxley.expensetracker.domain.models.Bill
+import com.dm.berxley.expensetracker.domain.models.Transaction
+import com.dm.berxley.expensetracker.presentation.common.BillItem
 import com.dm.berxley.expensetracker.presentation.common.Constants
+import com.dm.berxley.expensetracker.presentation.common.TransactionItem
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun WalletScreen(navController: NavController) {
 
-    var tabIndex by remember {
-        mutableIntStateOf(0)
-    }
+    val viewModel = hiltViewModel<WalletViewModel>()
+    val selectedIndex = viewModel.selectedIndex.collectAsState().value
+
     val tabs = listOf(
         "Transactions",
         "Upcoming Bills"
@@ -91,7 +102,7 @@ fun WalletScreen(navController: NavController) {
                 .background(MaterialTheme.colorScheme.primary)
         )
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
@@ -99,131 +110,425 @@ fun WalletScreen(navController: NavController) {
                     bottom = paddingValues.calculateBottomPadding()
                 )
                 .clip(RoundedCornerShape(topEnd = 25.dp, topStart = 25.dp))
-                .verticalScroll(rememberScrollState())
+                //.verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(modifier = Modifier.height(Constants.SPACER_24))
-            Text(text = "Total Balance", fontWeight = FontWeight.Light, fontSize = 18.sp)
-            Text(text = "$ 2,546.89", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            item {
+                Spacer(modifier = Modifier.height(Constants.SPACER_24))
+                Text(text = "Total Balance", fontWeight = FontWeight.Light, fontSize = 18.sp)
+                Text(text = "$ 2,546.89", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            }
 
-            Spacer(modifier = Modifier.height(Constants.SPACER_24))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-
-                IconButton(
-                    modifier = Modifier.size(55.dp),
-                    onClick = { /*TODO*/ },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = Color.White,
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    )
+            item {
+                Spacer(modifier = Modifier.height(Constants.SPACER_24))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.onPrimary)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(Constants.SPACER_8),
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "add",
-                            tint = MaterialTheme.colorScheme.primary
+
+                    IconButton(
+                        modifier = Modifier.size(55.dp),
+                        onClick = { /*TODO*/ },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = Color.White,
+                            containerColor = MaterialTheme.colorScheme.primary,
                         )
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.onPrimary)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(Constants.SPACER_8),
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "add",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                    }
+
+                    IconButton(
+                        modifier = Modifier.size(55.dp),
+                        onClick = { /*TODO*/ },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = MaterialTheme.colorScheme.primary,
+                        )
+                    ) {
+
+                        Box(
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.onPrimary)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(Constants.SPACER_8),
+                                imageVector = Icons.Default.QrCode,
+                                contentDescription = "pay",
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+
+                    }
+
+                    IconButton(
+                        modifier = Modifier.size(55.dp),
+                        onClick = { /*TODO*/ },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = MaterialTheme.colorScheme.primary,
+                        )
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.onPrimary)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(Constants.SPACER_8),
+                                imageVector = Icons.Default.SendTimeExtension,
+                                contentDescription = "send",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
 
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.height(Constants.SPACER_24))
+            }
 
-                IconButton(
-                    modifier = Modifier.size(55.dp),
-                    onClick = { /*TODO*/ },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    )
+            stickyHeader {
+                TabRow(
+                    modifier = Modifier.padding(
+                        start = Constants.PADDING_START_END,
+                        end = Constants.PADDING_START_END
+                    ), selectedTabIndex = selectedIndex
                 ) {
-
-                    Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.onPrimary)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(Constants.SPACER_8),
-                            imageVector = Icons.Default.QrCode,
-                            contentDescription = "pay",
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-
-                }
-
-                IconButton(
-                    modifier = Modifier.size(55.dp),
-                    onClick = { /*TODO*/ },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    )
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.onPrimary)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(Constants.SPACER_8),
-                            imageVector = Icons.Default.SendTimeExtension,
-                            contentDescription = "send",
-                            tint = MaterialTheme.colorScheme.primary
+                    tabs.forEachIndexed { index, tabName ->
+                        Tab(
+                            text = {
+                                Text(text = tabName)
+                            },
+                            selected = index == selectedIndex,
+                            onClick = { viewModel.setSelectedIndex(index) },
                         )
                     }
                 }
-
             }
 
-            Spacer(modifier = Modifier.height(Constants.SPACER_24))
-
-            TabRow(
-                modifier = Modifier.padding(
-                    start = Constants.PADDING_START_END,
-                    end = Constants.PADDING_START_END
-                ), selectedTabIndex = tabIndex
-            ) {
-                tabs.forEachIndexed { index, tabName ->
-                    Tab(
-                        text = {
-                            Text(text = tabName)
-                        },
-                        selected = index == tabIndex,
-                        onClick = { tabIndex = index },
-                    )
-                }
+            when (selectedIndex) {
+                0 -> transactionsScreen()
+                1 -> billsScreen()
             }
-
-            when (tabIndex) {
-                0 -> TransactionsScreen(navController)
-                1 -> BillsScreen(navController)
-            }
-
         }
-
-
 
     }
 
+}
+
+
+fun LazyListScope.transactionsScreen() {
+    val transactions = listOf(
+        Transaction(
+            id = 1,
+            type = "DR",
+            merchant_name = "YouTube",
+            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
+            amount = 15.45,
+            fee = 1.50,
+            total_amount = 16.95,
+            date = "19th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "CR",
+            merchant_name = "Upwork",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
+            amount = 55.75,
+            fee = 0.00,
+            total_amount = 55.75,
+            date = "18th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "CR",
+            merchant_name = "PayPal",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/665/281/png-clipart-logo-computer-icons-paypal-paypal-blue-angle-thumbnail.png",
+            amount = 100.00,
+            fee = 1.50,
+            total_amount = 100.50,
+            date = "17th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "DR",
+            merchant_name = "Spotify",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
+            amount = 4.99,
+            fee = 0.01,
+            total_amount = 5.00,
+            date = "16th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "DR",
+            merchant_name = "YouTube",
+            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
+            amount = 15.45,
+            fee = 1.50,
+            total_amount = 16.95,
+            date = "19th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "CR",
+            merchant_name = "Upwork",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
+            amount = 55.75,
+            fee = 0.00,
+            total_amount = 55.75,
+            date = "18th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "CR",
+            merchant_name = "PayPal",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/665/281/png-clipart-logo-computer-icons-paypal-paypal-blue-angle-thumbnail.png",
+            amount = 100.00,
+            fee = 1.50,
+            total_amount = 100.50,
+            date = "17th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "DR",
+            merchant_name = "Spotify",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
+            amount = 4.99,
+            fee = 0.01,
+            total_amount = 5.00,
+            date = "16th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "DR",
+            merchant_name = "YouTube",
+            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
+            amount = 15.45,
+            fee = 1.50,
+            total_amount = 16.95,
+            date = "19th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "CR",
+            merchant_name = "Upwork",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
+            amount = 55.75,
+            fee = 0.00,
+            total_amount = 55.75,
+            date = "18th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "CR",
+            merchant_name = "PayPal",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/665/281/png-clipart-logo-computer-icons-paypal-paypal-blue-angle-thumbnail.png",
+            amount = 100.00,
+            fee = 1.50,
+            total_amount = 100.50,
+            date = "17th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "DR",
+            merchant_name = "Spotify",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
+            amount = 4.99,
+            fee = 0.01,
+            total_amount = 5.00,
+            date = "16th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "DR",
+            merchant_name = "YouTube",
+            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
+            amount = 15.45,
+            fee = 1.50,
+            total_amount = 16.95,
+            date = "19th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "CR",
+            merchant_name = "Upwork",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
+            amount = 55.75,
+            fee = 0.00,
+            total_amount = 55.75,
+            date = "18th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "CR",
+            merchant_name = "PayPal",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/665/281/png-clipart-logo-computer-icons-paypal-paypal-blue-angle-thumbnail.png",
+            amount = 100.00,
+            fee = 1.50,
+            total_amount = 100.50,
+            date = "17th Sep 2024",
+            time = "17:09"
+        ),
+        Transaction(
+            id = 1,
+            type = "DR",
+            merchant_name = "Spotify",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
+            amount = 4.99,
+            fee = 0.01,
+            total_amount = 5.00,
+            date = "16th Sep 2024",
+            time = "17:09"
+        )
+    )
+    itemsIndexed(transactions){index, transaction ->
+        TransactionItem(transaction = transaction)
+    }
+}
+
+fun LazyListScope.billsScreen() {
+    val bills  = listOf(
+        Bill(
+            id = 1,
+            merchant_name = "Spotify",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
+            amount = 5.50,
+            due_date = "1st Oct 2024",
+            status = "Pending"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Youtube",
+            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
+            amount = 3.00,
+            due_date = "10th Sept 2024",
+            status = "Due"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Upwork",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
+            amount = 300.00,
+            due_date = "21st Sept 2024",
+            status = "Due"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Spotify",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
+            amount = 5.50,
+            due_date = "1st Oct 2024",
+            status = "Pending"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Youtube",
+            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
+            amount = 3.00,
+            due_date = "10th Sept 2024",
+            status = "Due"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Upwork",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
+            amount = 300.00,
+            due_date = "21st Sept 2024",
+            status = "Due"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Spotify",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
+            amount = 5.50,
+            due_date = "1st Oct 2024",
+            status = "Pending"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Youtube",
+            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
+            amount = 3.00,
+            due_date = "10th Sept 2024",
+            status = "Due"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Upwork",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
+            amount = 300.00,
+            due_date = "21st Sept 2024",
+            status = "Due"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Spotify",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
+            amount = 5.50,
+            due_date = "1st Oct 2024",
+            status = "Pending"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Youtube",
+            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
+            amount = 3.00,
+            due_date = "10th Sept 2024",
+            status = "Due"
+        ),
+        Bill(
+            id = 1,
+            merchant_name = "Upwork",
+            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
+            amount = 300.00,
+            due_date = "21st Sept 2024",
+            status = "Due"
+        )
+    )
+
+    itemsIndexed(bills){index, bill ->
+        BillItem(bill = bill)
+    }
 }
 
 @Preview(showBackground = true)
