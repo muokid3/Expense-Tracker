@@ -27,9 +27,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +51,14 @@ import com.dm.berxley.expensetracker.presentation.common.Constants
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WalletScreen(navController: NavController) {
+
+    var tabIndex by remember {
+        mutableIntStateOf(0)
+    }
+    val tabs = listOf(
+        "Transactions",
+        "Upcoming Bills"
+    )
 
     Scaffold(
         topBar = {
@@ -180,7 +194,33 @@ fun WalletScreen(navController: NavController) {
 
             }
 
+            Spacer(modifier = Modifier.height(Constants.SPACER_24))
+
+            TabRow(
+                modifier = Modifier.padding(
+                    start = Constants.PADDING_START_END,
+                    end = Constants.PADDING_START_END
+                ), selectedTabIndex = tabIndex
+            ) {
+                tabs.forEachIndexed { index, tabName ->
+                    Tab(
+                        text = {
+                            Text(text = tabName)
+                        },
+                        selected = index == tabIndex,
+                        onClick = { tabIndex = index },
+                    )
+                }
+            }
+
+            when (tabIndex) {
+                0 -> TransactionsScreen(navController)
+                1 -> BillsScreen(navController)
+            }
+
         }
+
+
 
     }
 
