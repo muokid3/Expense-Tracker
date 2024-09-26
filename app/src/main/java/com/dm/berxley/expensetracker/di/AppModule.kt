@@ -3,6 +3,8 @@ package com.dm.berxley.expensetracker.di
 import android.app.Application
 import androidx.room.Room
 import com.dm.berxley.expensetracker.data.local.AppDatabase
+import com.dm.berxley.expensetracker.data.repositories.ExpenseRoomRepositoryImpl
+import com.dm.berxley.expensetracker.domain.repositories.ExpenseRoomRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,4 +27,9 @@ object AppModule {
             .build()
 
     }
+
+    @Provides
+    @Singleton
+    fun provideExpenseRoomRepository(appDatabase: AppDatabase): ExpenseRoomRepository =
+        ExpenseRoomRepositoryImpl(appDatabase)
 }
