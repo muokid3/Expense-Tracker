@@ -62,9 +62,6 @@ fun AddTransaction(navController: NavController) {
     val viewModel = hiltViewModel<AddTransactionViewModel>()
     val addTransactionState = viewModel.addTransactionState.collectAsState().value
 
-    var selectedMerchant by remember {
-        mutableStateOf<Merchant?>(null)
-    }
 
     var isDropdownExpanded by remember {
         mutableStateOf(false)
@@ -150,13 +147,13 @@ fun AddTransaction(navController: NavController) {
                         modifier = Modifier
                             .menuAnchor()
                             .fillMaxWidth(),
-                        value = selectedMerchant?.name ?: "",
+                        value = addTransactionState.selectedMerchant?.name ?: "",
                         onValueChange = {},
                         readOnly = true,
                         singleLine = true,
                         label = { Text("Select Merchant") },
                         leadingIcon = {
-                            selectedMerchant?.let {
+                            addTransactionState.selectedMerchant?.let {
                                 AsyncImage(
                                     modifier = Modifier.size(Constants.SPACER_24),
                                     model = it.icon_url,
@@ -189,7 +186,7 @@ fun AddTransaction(navController: NavController) {
 
                                 },
                                 onClick = {
-                                    selectedMerchant = merchant
+                                    viewModel.setSelectedMerchant(merchant)
                                     isDropdownExpanded = false
                                 },
                                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -254,7 +251,7 @@ fun AddTransaction(navController: NavController) {
                     .padding(top = Constants.SPACER_8),
                     label = { Text(text = "Time") },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next
+                        keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done
                     ),
                     trailingIcon = {
                         Icon(
