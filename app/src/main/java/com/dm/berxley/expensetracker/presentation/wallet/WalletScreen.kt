@@ -61,6 +61,7 @@ import com.dm.berxley.expensetracker.domain.models.Transaction
 import com.dm.berxley.expensetracker.presentation.common.BillItem
 import com.dm.berxley.expensetracker.presentation.common.Constants
 import com.dm.berxley.expensetracker.presentation.common.TransactionItem
+import com.dm.berxley.expensetracker.presentation.navgraph.Screen
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -124,13 +125,29 @@ fun WalletScreen(navController: NavController) {
                     Text(text = "Which type of transactions would you like to add?")
                     Spacer(modifier = Modifier.height(Constants.SPACER_24))
 
-                    TextButton(onClick = { /*TODO*/ }) {
+                    TextButton(onClick = {
+                        isBottomSheetOpen = false
+                        navController.navigate(
+                            Screen.AddTransactionScreen.route.replace(
+                                "{transactionType}",
+                                "EXPENSE"
+                            )
+                        )
+                    }) {
                         Icon(imageVector = Icons.Default.ArrowCircleDown, contentDescription = null)
                         Spacer(modifier = Modifier.width(Constants.SPACER_16))
                         Text(text = "Add Expense")
                     }
 
-                    TextButton(onClick = { /*TODO*/ }) {
+                    TextButton(onClick = {
+                        isBottomSheetOpen = false
+                        navController.navigate(
+                            Screen.AddTransactionScreen.route.replace(
+                                "{transactionType}",
+                                "INCOME"
+                            )
+                        )
+                    }) {
                         Icon(imageVector = Icons.Default.ArrowCircleUp, contentDescription = null)
                         Spacer(modifier = Modifier.width(Constants.SPACER_16))
                         Text(text = "Add Income")
