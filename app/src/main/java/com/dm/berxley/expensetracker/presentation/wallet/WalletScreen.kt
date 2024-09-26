@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -19,6 +20,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowCircleDown
+import androidx.compose.material.icons.filled.ArrowCircleUp
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.SendTimeExtension
@@ -28,13 +31,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,6 +68,11 @@ fun WalletScreen(navController: NavController) {
 
     val viewModel = hiltViewModel<WalletViewModel>()
     val selectedIndex = viewModel.selectedIndex.collectAsState().value
+
+    val bottomSheetState = rememberModalBottomSheetState()
+    var isBottomSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     val tabs = listOf(
         "Transactions",
@@ -95,6 +110,37 @@ fun WalletScreen(navController: NavController) {
                 .background(MaterialTheme.colorScheme.primary)
         )
 
+        if (isBottomSheetOpen) {
+            ModalBottomSheet(
+                sheetState = bottomSheetState,
+                onDismissRequest = { isBottomSheetOpen = false }) {
+                Column(
+                    modifier = Modifier.padding(
+                        start = Constants.PADDING_START_END,
+                        end = Constants.PADDING_START_END,
+                        bottom = Constants.PADDING_START_END
+                    )
+                ) {
+                    Text(text = "Which type of transactions would you like to add?")
+                    Spacer(modifier = Modifier.height(Constants.SPACER_24))
+
+                    TextButton(onClick = { /*TODO*/ }) {
+                        Icon(imageVector = Icons.Default.ArrowCircleDown, contentDescription = null)
+                        Spacer(modifier = Modifier.width(Constants.SPACER_16))
+                        Text(text = "Add Expense")
+                    }
+
+                    TextButton(onClick = { /*TODO*/ }) {
+                        Icon(imageVector = Icons.Default.ArrowCircleUp, contentDescription = null)
+                        Spacer(modifier = Modifier.width(Constants.SPACER_16))
+                        Text(text = "Add Income")
+                    }
+
+                }
+
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -107,7 +153,6 @@ fun WalletScreen(navController: NavController) {
                 .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             item {
                 Spacer(modifier = Modifier.height(Constants.SPACER_24))
             }
@@ -130,7 +175,7 @@ fun WalletScreen(navController: NavController) {
 
                         IconButton(
                             modifier = Modifier.size(55.dp),
-                            onClick = { /*TODO*/ },
+                            onClick = { isBottomSheetOpen = true },
                             colors = IconButtonDefaults.iconButtonColors(
                                 contentColor = Color.White,
                                 containerColor = MaterialTheme.colorScheme.primary,
