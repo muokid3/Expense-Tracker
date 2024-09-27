@@ -1,6 +1,7 @@
 package com.dm.berxley.expensetracker.presentation.wallet.addTransaction
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,8 +22,11 @@ import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -44,13 +48,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.dm.berxley.expensetracker.domain.models.Merchant
 import com.dm.berxley.expensetracker.presentation.common.Constants
@@ -214,8 +218,12 @@ fun AddTransaction(navController: NavController) {
                         }
                     }
                 }
-                if (!validateMerchant){
-                    Text(text = merchantError, modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error)
+                if (!validateMerchant) {
+                    Text(
+                        text = merchantError,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
 
                 OutlinedTextField(modifier = Modifier
@@ -235,8 +243,12 @@ fun AddTransaction(navController: NavController) {
                     onValueChange = {
                         amount = it
                     })
-                if (!validateAmount){
-                    Text(text = amountError, modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error)
+                if (!validateAmount) {
+                    Text(
+                        text = amountError,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
 
                 OutlinedTextField(modifier = Modifier
@@ -256,8 +268,12 @@ fun AddTransaction(navController: NavController) {
                     onValueChange = {
                         fees = it
                     })
-                if (!validateFees){
-                    Text(text = feesError, modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error)
+                if (!validateFees) {
+                    Text(
+                        text = feesError,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
 
                 OutlinedTextField(modifier = Modifier
@@ -265,7 +281,7 @@ fun AddTransaction(navController: NavController) {
                     .padding(top = Constants.SPACER_8),
                     label = { Text(text = "Date") },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next
+                        keyboardType = KeyboardType.Text, imeAction = ImeAction.Next
                     ),
                     value = date,
                     isError = !validateDate,
@@ -277,8 +293,12 @@ fun AddTransaction(navController: NavController) {
                     onValueChange = {
                         date = it
                     })
-                if (!validateDate){
-                    Text(text = dateError, modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error)
+                if (!validateDate) {
+                    Text(
+                        text = dateError,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
 
                 OutlinedTextField(modifier = Modifier
@@ -286,7 +306,7 @@ fun AddTransaction(navController: NavController) {
                     .padding(top = Constants.SPACER_8),
                     label = { Text(text = "Time") },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done
+                        keyboardType = KeyboardType.Text, imeAction = ImeAction.Done
                     ),
                     trailingIcon = {
                         Icon(
@@ -298,11 +318,36 @@ fun AddTransaction(navController: NavController) {
                     onValueChange = {
                         time = it
                     })
-                if (!validateTime){
-                    Text(text = timeError, modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error)
+                if (!validateTime) {
+                    Text(
+                        text = timeError,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(Constants.SPACER_24))
+
+                if (addTransactionState.isLoading) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                    Spacer(modifier = Modifier.height(Constants.SPACER_24))
+                }
+
+
+                if (addTransactionState.operationSucceeded) {
+                    SuccessDialog("Transaction has been added successfully!") {
+                        viewModel.resetState()
+                        amount = ""
+                        fees = ""
+                        date = ""
+                        time = ""
+                    }
+                }
 
                 Button(modifier = Modifier.fillMaxWidth(), onClick = {
                     if (validateForm(
@@ -313,8 +358,13 @@ fun AddTransaction(navController: NavController) {
                             time
                         )
                     ) {
-                        //show loading state
                         //call viewModel here to submit form
+                        viewModel.saveTransaction(
+                            amount = amount,
+                            fee = fees,
+                            date = date,
+                            time = time
+                        )
                     }
                 }) {
                     Text(text = "Save")
@@ -327,8 +377,39 @@ fun AddTransaction(navController: NavController) {
     }
 }
 
-@Preview
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SuccessDialog(message: String, onDismiss: () -> Unit) {
+
+    AlertDialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(modifier = Modifier.padding(Constants.PADDING_START_END)) {
+                Text(text = "Success!", fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(Constants.SPACER_24))
+                Text(text = message, fontWeight = FontWeight.Normal)
+                Spacer(modifier = Modifier.height(Constants.SPACER_24))
+
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    Button(onClick = onDismiss) {
+                        Text(text = "OK")
+                    }
+                }
+
+            }
+        }
+    }
+
+}
+
+@Preview(showBackground = true)
 @Composable
 fun AddTransactionPrev() {
-    AddTransaction(rememberNavController())
+    SuccessDialog("Product was added succssfully") {
+
+    }
 }

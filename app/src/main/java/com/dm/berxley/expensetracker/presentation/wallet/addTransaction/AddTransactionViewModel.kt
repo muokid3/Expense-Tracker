@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dm.berxley.expensetracker.domain.models.Merchant
+import com.dm.berxley.expensetracker.domain.models.Transaction
 import com.dm.berxley.expensetracker.domain.repositories.ExpenseRoomRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -64,7 +64,7 @@ class AddTransactionViewModel @Inject constructor(
     }
 
     private fun loadMerchantsFromApi() {
-        merchants.forEach{
+        merchants.forEach {
             viewModelScope.launch {
                 expenseRoomRepository.upsertMerchant(it)
             }
@@ -79,9 +79,41 @@ class AddTransactionViewModel @Inject constructor(
         }
     }
 
-    fun saveTransaction(amount: String, fee: String, date: String, time: String){
-        
+    fun resetState(){
+        _addTransactionState.update {
+            it.copy(isLoading = false, operationSucceeded = false, selectedMerchant = null)
+        }
+    }
 
+    fun saveTransaction(amount: String, fee: String, date: String, time: String) {
+        //upsert to DB
+        _addTransactionState.value.selectedMerchant?.let { merchant ->
+
+            //change state to loading
+            _addTransactionState.update {
+                it.copy(isLoading = true)
+            }
+
+            val transaction = Transaction(
+                type = _addTransactionState.value.expenseType!!,
+                merchant_name = merchant.name,
+                merchant_icon_url = merchant.icon_url,
+                amount = amount.toDouble(),
+                fee = fee.toDouble(),
+                total_amount = amount.toDouble() + fee.toDouble(),
+                date = date,
+                time = time
+            )
+
+            viewModelScope.launch {
+                expenseRoomRepository.upsertTransaction(transaction)
+
+                _addTransactionState.update {
+                    it.copy(isLoading = false, operationSucceeded = true)
+                }
+            }
+
+        }
     }
 
 

@@ -7,7 +7,7 @@ import com.dm.berxley.expensetracker.domain.models.Merchant
 import com.dm.berxley.expensetracker.domain.models.Transaction
 import com.dm.berxley.expensetracker.domain.models.User
 
-@Database(entities = [User::class, Transaction::class, Merchant::class, Bill::class], version = 1)
+@Database(entities = [User::class, Transaction::class, Merchant::class, Bill::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     //DAOs here
     abstract val appDao: AppDao

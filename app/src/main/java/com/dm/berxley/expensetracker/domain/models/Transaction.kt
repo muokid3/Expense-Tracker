@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Transaction(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val type: String,
     val merchant_name: String,
     val merchant_icon_url: String,
