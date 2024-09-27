@@ -66,50 +66,69 @@ fun AddTransaction(navController: NavController) {
     var isDropdownExpanded by remember {
         mutableStateOf(false)
     }
+    var validateMerchant by rememberSaveable { mutableStateOf(true) }
+    var merchantError by rememberSaveable { mutableStateOf("Please select a merchant to proceed") }
 
-    var amount by rememberSaveable {
-        mutableStateOf("")
+    var amount by rememberSaveable { mutableStateOf("") }
+    var validateAmount by rememberSaveable { mutableStateOf(true) }
+    var amountError by rememberSaveable { mutableStateOf("Please enter a valid amount") }
+
+    var date by rememberSaveable { mutableStateOf("") }
+    var validateDate by rememberSaveable { mutableStateOf(true) }
+    var dateError by rememberSaveable { mutableStateOf("Please enter a valid date") }
+
+    var time by rememberSaveable { mutableStateOf("") }
+    var validateTime by rememberSaveable { mutableStateOf(true) }
+    var timeError by rememberSaveable { mutableStateOf("Please enter a valid time") }
+
+    var fees by rememberSaveable { mutableStateOf("") }
+    var validateFees by rememberSaveable { mutableStateOf(true) }
+    var feesError by rememberSaveable { mutableStateOf("Please enter a valid fees amount") }
+
+    fun validateForm(
+        merchant: Merchant?,
+        amount: String,
+        fees: String,
+        date: String,
+        time: String
+    ): Boolean {
+        validateMerchant = merchant != null
+        validateAmount = amount.isNotBlank()
+        validateFees = fees.isNotBlank()
+        validateDate = date.isNotBlank()
+        validateTime = time.isNotBlank()
+
+        return validateMerchant && validateAmount && validateFees && validateDate && validateTime
     }
 
-    var date by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var time by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var fees by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    Scaffold(topBar = {
-        CenterAlignedTopAppBar(
-            title = { Text(text = "ADD ${addTransactionState.expenseType}") },
-            actions = {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Filled.Notifications,
-                        contentDescription = "Notifications",
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            },
-            navigationIcon = {
-                IconButton(onClick = { navController.navigateUp() }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary,
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(text = "ADD ${addTransactionState.expenseType}") },
+                actions = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "Notifications",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                )
             )
-        )
-    }) { paddingValues ->
+        }) { paddingValues ->
 
         Box(
             Modifier
@@ -151,6 +170,7 @@ fun AddTransaction(navController: NavController) {
                         onValueChange = {},
                         readOnly = true,
                         singleLine = true,
+                        isError = !validateMerchant,
                         label = { Text("Select Merchant") },
                         leadingIcon = {
                             addTransactionState.selectedMerchant?.let {
@@ -194,6 +214,9 @@ fun AddTransaction(navController: NavController) {
                         }
                     }
                 }
+                if (!validateMerchant){
+                    Text(text = merchantError, modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error)
+                }
 
                 OutlinedTextField(modifier = Modifier
                     .fillMaxWidth()
@@ -203,6 +226,7 @@ fun AddTransaction(navController: NavController) {
                         keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next
                     ),
                     value = amount,
+                    isError = !validateAmount,
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.AttachMoney, contentDescription = null
@@ -211,6 +235,9 @@ fun AddTransaction(navController: NavController) {
                     onValueChange = {
                         amount = it
                     })
+                if (!validateAmount){
+                    Text(text = amountError, modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error)
+                }
 
                 OutlinedTextField(modifier = Modifier
                     .fillMaxWidth()
@@ -225,9 +252,13 @@ fun AddTransaction(navController: NavController) {
                         )
                     },
                     value = fees,
+                    isError = !validateFees,
                     onValueChange = {
                         fees = it
                     })
+                if (!validateFees){
+                    Text(text = feesError, modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error)
+                }
 
                 OutlinedTextField(modifier = Modifier
                     .fillMaxWidth()
@@ -237,6 +268,7 @@ fun AddTransaction(navController: NavController) {
                         keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Next
                     ),
                     value = date,
+                    isError = !validateDate,
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.CalendarToday, contentDescription = null
@@ -245,6 +277,9 @@ fun AddTransaction(navController: NavController) {
                     onValueChange = {
                         date = it
                     })
+                if (!validateDate){
+                    Text(text = dateError, modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error)
+                }
 
                 OutlinedTextField(modifier = Modifier
                     .fillMaxWidth()
@@ -259,13 +294,29 @@ fun AddTransaction(navController: NavController) {
                         )
                     },
                     value = time,
+                    isError = !validateTime,
                     onValueChange = {
                         time = it
                     })
+                if (!validateTime){
+                    Text(text = timeError, modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.error)
+                }
 
                 Spacer(modifier = Modifier.height(Constants.SPACER_24))
 
-                Button(modifier = Modifier.fillMaxWidth(), onClick = { /*TODO*/ }) {
+                Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                    if (validateForm(
+                            addTransactionState.selectedMerchant,
+                            amount,
+                            fees,
+                            date,
+                            time
+                        )
+                    ) {
+                        //show loading state
+                        //call viewModel here to submit form
+                    }
+                }) {
                     Text(text = "Save")
                 }
             }

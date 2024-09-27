@@ -79,5 +79,10 @@ class AddTransactionViewModel @Inject constructor(
         }
     }
 
+    fun saveTransaction(amount: String, fee: String, date: String, time: String){
+        
+
+    }
+
 
 }
