@@ -51,4 +51,8 @@ class ExpenseRoomRepositoryImpl @Inject constructor(
     override fun getTopFiveTransactions(): Flow<List<Transaction>> {
         return appDatabase.appDao.getTopFiveTransactions()
     }
+
+    override fun getSumAmount(type: String): Double {
+        return appDatabase.appDao.getSumAmount(type)
+    }
 }

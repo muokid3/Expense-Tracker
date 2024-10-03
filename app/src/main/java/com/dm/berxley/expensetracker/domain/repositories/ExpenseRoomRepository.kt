@@ -22,6 +22,8 @@ interface ExpenseRoomRepository {
 
     fun getTopFiveTransactions(): Flow<List<Transaction>>
 
+    fun getSumAmount(type: String): Double
+
 
 
 }

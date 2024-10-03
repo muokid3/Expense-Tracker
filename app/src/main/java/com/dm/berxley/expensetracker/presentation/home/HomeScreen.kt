@@ -31,19 +31,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.dm.berxley.expensetracker.domain.models.Transaction
 import com.dm.berxley.expensetracker.presentation.common.Constants
 import com.dm.berxley.expensetracker.presentation.common.TransactionItem
+import java.text.NumberFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +54,9 @@ fun HomeScreen(navController: NavController) {
 
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
+    val viewModel = hiltViewModel<HomeViewModel>()
+    val homeState = viewModel.homeState.collectAsState().value
 
     val transactions = listOf(
         Transaction(
@@ -168,7 +174,7 @@ fun HomeScreen(navController: NavController) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(text = "Total Balance", fontSize = 18.sp)
                             Text(
-                                text = "$ 2,546.00",
+                                text = "$ ${formatDouble(homeState.totalBalance)}",
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -206,7 +212,7 @@ fun HomeScreen(navController: NavController) {
                                 )
                             }
                             Text(
-                                text = "$ 3,565.00",
+                                text = "$ ${formatDouble(homeState.totalIncome)}",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -231,7 +237,7 @@ fun HomeScreen(navController: NavController) {
                                 )
                             }
                             Text(
-                                text = "$ 1,546.00",
+                                text = "$ ${formatDouble(homeState.totalExpenses)}",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -254,23 +260,21 @@ fun HomeScreen(navController: NavController) {
                 Text(text = "See All")
             }
 
-            for (transaction in transactions){
+            for (transaction in homeState.transactionHistory) {
                 TransactionItem(transaction = transaction)
             }
-
-//            LazyColumn(modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(start = Constants.PADDING_START_END, end = Constants.PADDING_START_END,)) {
-//
-//                items(6){
-//                    Text(text = "Test")
-//                }
-//
-//            }
-
         }
 
     }
+
+}
+
+fun formatDouble(number: Double, locale: Locale = Locale.getDefault()): String {
+    val formatter = NumberFormat.getInstance(locale)
+    formatter.isGroupingUsed = true
+    formatter.minimumFractionDigits = 2
+
+    return formatter.format(number)
 
 }
 

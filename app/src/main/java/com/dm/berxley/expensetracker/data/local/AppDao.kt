@@ -47,5 +47,9 @@ interface AppDao {
     fun getUser(): Flow<User>
 
 
+    @Query("SELECT SUM(total_amount) FROM `Transaction` as total WHERE type = :type")
+    fun getSumAmount(type: String): Double
+
+
 
 }
