@@ -34,8 +34,11 @@ interface AppDao {
     @Upsert
     suspend fun upsertTransaction(transaction: Transaction)
 
-    @Query("SELECT * FROM `Transaction`")
+    @Query("SELECT * FROM `Transaction` ORDER BY id DESC")
     fun getAllTransactions(): Flow<List<Transaction>>
+
+    @Query("SELECT * FROM `Transaction` ORDER BY id DESC LIMIT 5")
+    fun getTopFiveTransactions(): Flow<List<Transaction>>
 
     @Query("SELECT * FROM `Transaction` WHERE id = :id")
     fun getTransactionById(id: Int): Transaction

@@ -62,10 +62,10 @@ fun TransactionItem(transaction: Transaction) {
 
         Text(
             modifier = Modifier.padding(end = Constants.PADDING_START_END),
-            text = if (transaction.type == "CR") "+ $${transaction.total_amount}" else "- $${transaction.total_amount}",
+            text = if (transaction.type == "INCOME") "+ $${transaction.total_amount}" else "- $${transaction.total_amount}",
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
-            color = if (transaction.type == "CR") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+            color = if (transaction.type == "INCOME") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
         )
 
 

@@ -69,6 +69,7 @@ fun WalletScreen(navController: NavController) {
 
     val viewModel = hiltViewModel<WalletViewModel>()
     val selectedIndex = viewModel.selectedIndex.collectAsState().value
+    val walletState = viewModel.walletState.collectAsState().value
 
     val bottomSheetState = rememberModalBottomSheetState()
     var isBottomSheetOpen by rememberSaveable {
@@ -325,7 +326,7 @@ fun WalletScreen(navController: NavController) {
             }
 
             when (selectedIndex) {
-                0 -> transactionsScreen()
+                0 -> transactionsScreen(walletState)
                 1 -> billsScreen()
             }
         }
@@ -335,186 +336,8 @@ fun WalletScreen(navController: NavController) {
 }
 
 
-fun LazyListScope.transactionsScreen() {
-    val transactions = listOf(
-        Transaction(
-            id = 1,
-            type = "DR",
-            merchant_name = "YouTube",
-            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
-            amount = 15.45,
-            fee = 1.50,
-            total_amount = 16.95,
-            date = "19th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "CR",
-            merchant_name = "Upwork",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
-            amount = 55.75,
-            fee = 0.00,
-            total_amount = 55.75,
-            date = "18th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "CR",
-            merchant_name = "PayPal",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/665/281/png-clipart-logo-computer-icons-paypal-paypal-blue-angle-thumbnail.png",
-            amount = 100.00,
-            fee = 1.50,
-            total_amount = 100.50,
-            date = "17th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "DR",
-            merchant_name = "Spotify",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
-            amount = 4.99,
-            fee = 0.01,
-            total_amount = 5.00,
-            date = "16th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "DR",
-            merchant_name = "YouTube",
-            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
-            amount = 15.45,
-            fee = 1.50,
-            total_amount = 16.95,
-            date = "19th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "CR",
-            merchant_name = "Upwork",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
-            amount = 55.75,
-            fee = 0.00,
-            total_amount = 55.75,
-            date = "18th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "CR",
-            merchant_name = "PayPal",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/665/281/png-clipart-logo-computer-icons-paypal-paypal-blue-angle-thumbnail.png",
-            amount = 100.00,
-            fee = 1.50,
-            total_amount = 100.50,
-            date = "17th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "DR",
-            merchant_name = "Spotify",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
-            amount = 4.99,
-            fee = 0.01,
-            total_amount = 5.00,
-            date = "16th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "DR",
-            merchant_name = "YouTube",
-            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
-            amount = 15.45,
-            fee = 1.50,
-            total_amount = 16.95,
-            date = "19th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "CR",
-            merchant_name = "Upwork",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
-            amount = 55.75,
-            fee = 0.00,
-            total_amount = 55.75,
-            date = "18th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "CR",
-            merchant_name = "PayPal",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/665/281/png-clipart-logo-computer-icons-paypal-paypal-blue-angle-thumbnail.png",
-            amount = 100.00,
-            fee = 1.50,
-            total_amount = 100.50,
-            date = "17th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "DR",
-            merchant_name = "Spotify",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
-            amount = 4.99,
-            fee = 0.01,
-            total_amount = 5.00,
-            date = "16th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "DR",
-            merchant_name = "YouTube",
-            merchant_icon_url = "https://www.youtube.com/s/desktop/7e8b1d69/img/favicon_144x144.png",
-            amount = 15.45,
-            fee = 1.50,
-            total_amount = 16.95,
-            date = "19th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "CR",
-            merchant_name = "Upwork",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/257/806/png-clipart-upwork-freelancer-android-android-text-trademark-thumbnail.png",
-            amount = 55.75,
-            fee = 0.00,
-            total_amount = 55.75,
-            date = "18th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "CR",
-            merchant_name = "PayPal",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/665/281/png-clipart-logo-computer-icons-paypal-paypal-blue-angle-thumbnail.png",
-            amount = 100.00,
-            fee = 1.50,
-            total_amount = 100.50,
-            date = "17th Sep 2024",
-            time = "17:09"
-        ),
-        Transaction(
-            id = 1,
-            type = "DR",
-            merchant_name = "Spotify",
-            merchant_icon_url = "https://e7.pngegg.com/pngimages/158/639/png-clipart-spotify-streaming-media-logo-playlist-spotify-app-icon-logo-music-download-thumbnail.png",
-            amount = 4.99,
-            fee = 0.01,
-            total_amount = 5.00,
-            date = "16th Sep 2024",
-            time = "17:09"
-        )
-    )
-    itemsIndexed(transactions) { index, transaction ->
+fun LazyListScope.transactionsScreen(walletState: WalletState) {
+    itemsIndexed(walletState.transactionsList) { index, transaction ->
         TransactionItem(transaction = transaction)
     }
 }

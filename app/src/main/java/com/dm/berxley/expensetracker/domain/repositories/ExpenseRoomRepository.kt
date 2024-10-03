@@ -20,6 +20,8 @@ interface ExpenseRoomRepository {
     suspend fun getTransactionById(id: Int): Transaction
     fun getTransactions(): Flow<List<Transaction>>
 
+    fun getTopFiveTransactions(): Flow<List<Transaction>>
+
 
 
 }
