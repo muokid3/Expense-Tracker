@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.dm.berxley.expensetracker.R
 import com.dm.berxley.expensetracker.domain.models.Transaction
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun TransactionItem(transaction: Transaction) {
@@ -62,7 +64,7 @@ fun TransactionItem(transaction: Transaction) {
 
         Text(
             modifier = Modifier.padding(end = Constants.PADDING_START_END),
-            text = if (transaction.type == "INCOME") "+ $${transaction.total_amount}" else "- $${transaction.total_amount}",
+            text = if (transaction.type == "INCOME") "+ $${Common.formatDouble(transaction.total_amount)}" else "- $${Common.formatDouble(transaction.total_amount)}",
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
             color = if (transaction.type == "INCOME") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
@@ -72,6 +74,8 @@ fun TransactionItem(transaction: Transaction) {
     }
 
 }
+
+
 
 
 @Preview(showBackground = true)

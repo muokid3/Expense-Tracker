@@ -43,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.dm.berxley.expensetracker.domain.models.Transaction
+import com.dm.berxley.expensetracker.presentation.common.Common
 import com.dm.berxley.expensetracker.presentation.common.Constants
 import com.dm.berxley.expensetracker.presentation.common.TransactionItem
 import java.text.NumberFormat
@@ -174,7 +175,7 @@ fun HomeScreen(navController: NavController) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(text = "Total Balance", fontSize = 18.sp)
                             Text(
-                                text = "$ ${formatDouble(homeState.totalBalance)}",
+                                text = "$ ${Common.formatDouble(homeState.totalBalance)}",
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -212,7 +213,7 @@ fun HomeScreen(navController: NavController) {
                                 )
                             }
                             Text(
-                                text = "$ ${formatDouble(homeState.totalIncome)}",
+                                text = "$ ${Common.formatDouble(homeState.totalIncome)}",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -237,7 +238,7 @@ fun HomeScreen(navController: NavController) {
                                 )
                             }
                             Text(
-                                text = "$ ${formatDouble(homeState.totalExpenses)}",
+                                text = "$ ${Common.formatDouble(homeState.totalExpenses)}",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -269,14 +270,6 @@ fun HomeScreen(navController: NavController) {
 
 }
 
-fun formatDouble(number: Double, locale: Locale = Locale.getDefault()): String {
-    val formatter = NumberFormat.getInstance(locale)
-    formatter.isGroupingUsed = true
-    formatter.minimumFractionDigits = 2
-
-    return formatter.format(number)
-
-}
 
 @Preview(showBackground = true)
 @Composable
