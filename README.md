@@ -3,6 +3,8 @@
 Practicing Jetpack compose.<br>
 
 An expense tracker app for tracking income and expenses. Kotlin, Jetpack compose.
+MVVM Presentational pattern
+Clean architecture
 
 Screenshots:<br>
 
